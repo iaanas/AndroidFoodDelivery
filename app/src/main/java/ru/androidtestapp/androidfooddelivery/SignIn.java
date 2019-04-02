@@ -1,6 +1,7 @@
 package ru.androidtestapp.androidfooddelivery;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.Objects;
 
+import ru.androidtestapp.androidfooddelivery.Common.Common;
 import ru.androidtestapp.androidfooddelivery.Model.User;
 
 public class SignIn extends AppCompatActivity {
@@ -56,8 +58,13 @@ public class SignIn extends AppCompatActivity {
 							User user = dataSnapshot.child( edtPhone.getText( ).toString( ) ).getValue( User.class );
 							
 							if ( Objects.requireNonNull( user ).getPassword( ).equals( edtPassword.getText( ).toString( ) ) ) {
-								Toast.makeText( SignIn.this , "Sign in successfully !" ,
-										Toast.LENGTH_SHORT ).show( );
+								
+								Intent homeIntent = new Intent( SignIn.this, Home.class );
+								Common.currentUser = user;
+								startActivity( homeIntent );
+								finish();
+								
+								
 							} else {
 								Toast.makeText( SignIn.this , "Sign in not successfully :(" ,
 										Toast.LENGTH_SHORT ).show( );
