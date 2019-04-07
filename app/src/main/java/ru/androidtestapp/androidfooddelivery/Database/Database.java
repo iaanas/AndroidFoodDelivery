@@ -21,6 +21,16 @@ public class Database extends SQLiteAssetHelper {
 		super( context , DB_NAME, null, DB_VER );
 	}
 	
+//	@Override
+//	public void onUpgrade( SQLiteDatabase db , int oldVersion , int newVersion ) {
+//		super.onUpgrade( db , oldVersion , newVersion );
+//	}
+//
+//	@Override
+//	public void onOpen( SQLiteDatabase db ) {
+//		super.onOpen( db );
+//	}
+	
 	public List< Order > getCarts() {
 		SQLiteDatabase db = getReadableDatabase();
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -59,4 +69,36 @@ public class Database extends SQLiteAssetHelper {
 		String query = String.format( "DELETE FROM OrderDetail" );
 		db.execSQL( query );
 	}
+	
+	public void addToFavorites(String foodId){
+		
+		SQLiteDatabase db = getReadableDatabase();
+		String query = String.format( "INSERT INTO Favorites(FoodId) VALUES('%s');", foodId );
+		db.execSQL( query );
+		
+	}
+	
+	public void removeFromFavorites(String foodId){
+		
+		SQLiteDatabase db = getReadableDatabase();
+		String query = String.format( "DELETE FROM Favorites WHERE FoodId='%s';", foodId );
+		db.execSQL( query );
+		
+	}
+	
+	public boolean isFavorites(String foodId){
+		
+		SQLiteDatabase db = getReadableDatabase();
+		String query = String.format( "SELECT * FROM Favorites WHERE FoodId='%s';", foodId );
+		db.rawQuery(  "SELECT * FROM Favorites WHERE FoodId=?", new String[]{ foodId } );
+		Cursor cursor = db.rawQuery( query, null );
+		if(cursor.getCount() <= 0){
+			cursor.close();
+			return false;
+		}
+		cursor.close();
+		return true;
+		
+	}
+	
 }

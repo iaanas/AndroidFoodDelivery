@@ -47,6 +47,18 @@
             app:met_primaryColor="@android:color/white"
             app:met_singleLineEllipsis="true"/>
 
+        <CheckBox
+            android:id="@+id/ckbRemember"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Material.Drawable.CheckBox"
+            android:text="Remember me"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            app:cbd_strokeColor="@android:color/white"
+            app:cbd_tickColor="@color/colorPrimary"
+            />
+
         <Button
             android:id="@+id/btnSignIn"
             android:text="SignIn"

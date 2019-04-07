@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -19,12 +20,14 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.Objects;
 
+import io.paperdb.Paper;
 import ru.androidtestapp.androidfooddelivery.Common.Common;
 import ru.androidtestapp.androidfooddelivery.Model.User;
 
 public class SignIn extends AppCompatActivity {
 	EditText edtPhone, edtPassword;
 	Button btnSignIn;
+	CheckBox ckbRemember;
 	
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -34,55 +37,70 @@ public class SignIn extends AppCompatActivity {
 		edtPassword = ( MaterialEditText ) findViewById( R.id.edtPassword );
 		edtPhone = (MaterialEditText) findViewById( R.id.edtPhone );
 		btnSignIn = findViewById( R.id.btnSignIn );
+		ckbRemember = (CheckBox) findViewById( R.id.ckbRemember );
+		
+		Paper.init( this );
 		
 		//Init FireBase
-		FirebaseDatabase database = FirebaseDatabase.getInstance();
+		final FirebaseDatabase database = FirebaseDatabase.getInstance();
 		final DatabaseReference table_user = database.getReference("User");
 		
 		btnSignIn.setOnClickListener( new View.OnClickListener( ) {
 			@Override
 			public void onClick( View v ) {
 				
-				final ProgressDialog mDialog = new ProgressDialog( SignIn.this );
-				mDialog.setMessage( "Please waiting... " );
-				mDialog.show();
-				
-				table_user.addValueEventListener( new ValueEventListener( ) {
-					@Override
-					public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
-						//Check if user not exist in database
-						if(dataSnapshot.child( edtPhone.getText().toString() ).exists()) {
-							
-							//Get User information
-							mDialog.dismiss( );
-							User user = dataSnapshot.child( edtPhone.getText( ).toString( ) ).getValue( User.class );
-							user.setPhone( edtPhone.getText().toString() );
-							
-							if ( Objects.requireNonNull( user ).getPassword( ).equals( edtPassword.getText( ).toString( ) ) ) {
+				if(Common.isConnectedToInternet( getBaseContext() )){
+					
+					//Save user & password
+					if(ckbRemember.isChecked()){
+						Paper.book().write( Common.USER_KEY, edtPhone.getText().toString() );
+						Paper.book().write( Common.PWD_KEY, edtPassword.getText().toString() );
+					}
+					
+					final ProgressDialog mDialog = new ProgressDialog( SignIn.this );
+					mDialog.setMessage( "Please waiting... " );
+					mDialog.show();
+					
+					table_user.addValueEventListener( new ValueEventListener( ) {
+						@Override
+						public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+							//Check if user not exist in database
+							if(dataSnapshot.child( edtPhone.getText().toString() ).exists()) {
 								
-								Intent homeIntent = new Intent( SignIn.this, Home.class );
-								Common.currentUser = user;
-								startActivity( homeIntent );
-								finish();
+								//Get User information
+								mDialog.dismiss( );
+								User user = dataSnapshot.child( edtPhone.getText( ).toString( ) ).getValue( User.class );
+								user.setPhone( edtPhone.getText().toString() );
 								
-								
+								if ( Objects.requireNonNull( user ).getPassword( ).equals( edtPassword.getText( ).toString( ) ) ) {
+									
+									Intent homeIntent = new Intent( SignIn.this, Home.class );
+									Common.currentUser = user;
+									startActivity( homeIntent );
+									finish();
+									
+									
+								} else {
+									Toast.makeText( SignIn.this , "Sign in not successfully :(" ,
+											Toast.LENGTH_SHORT ).show( );
+								}
 							} else {
-								Toast.makeText( SignIn.this , "Sign in not successfully :(" ,
+								mDialog.dismiss();
+								Toast.makeText( SignIn.this , "User not exist" ,
 										Toast.LENGTH_SHORT ).show( );
 							}
-						} else {
-							mDialog.dismiss();
-							Toast.makeText( SignIn.this , "User not exist" ,
-									Toast.LENGTH_SHORT ).show( );
+							
 						}
 						
-					}
-					
-					@Override
-					public void onCancelled( @NonNull DatabaseError databaseError ) {
-					
-					}
-				} );
+						@Override
+						public void onCancelled( @NonNull DatabaseError databaseError ) {
+						
+						}
+					} );
+				}
+				else {
+					Toast.makeText( SignIn.this, "Please check your connection !!!", Toast.LENGTH_SHORT ).show();
+				}
 			}
 		} );
 	}

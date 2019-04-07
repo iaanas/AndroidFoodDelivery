@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.androidtestapp.ViewHolder.FoodViewHolder;
+import ru.androidtestapp.androidfooddelivery.Common.Common;
+import ru.androidtestapp.androidfooddelivery.Database.Database;
 import ru.androidtestapp.androidfooddelivery.Intarface.ItemClickListener;
 import ru.androidtestapp.androidfooddelivery.Model.Food;
 
@@ -45,6 +47,8 @@ public class FoodList extends AppCompatActivity {
 	List<String> suggestList = new ArrayList<>(  );
 	MaterialSearchBar materialSearchBar;
 	
+	Database localDB;
+	
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
@@ -53,6 +57,9 @@ public class FoodList extends AppCompatActivity {
 		//FireBase
 		database = FirebaseDatabase.getInstance();
 		foodList = database.getReference("Food");
+		
+		//Local DB
+		localDB = new Database( this );
 		
 		recyclerView = (RecyclerView) findViewById( R.id.recycler_food );
 		recyclerView.setHasFixedSize( true );
@@ -64,7 +71,13 @@ public class FoodList extends AppCompatActivity {
 			categoryId = getIntent().getStringExtra( "CategoryId" );
 		}
 		if(!categoryId.isEmpty() && categoryId != null) {
-			loadListFood(categoryId);
+			if( Common.isConnectedToInternet( getBaseContext() ) ){
+				loadListFood(categoryId);
+			} else {
+				Toast.makeText( FoodList.this, "Please check your connection!!!",
+						Toast.LENGTH_SHORT).show();
+				return;
+			}
 		}
 		
 		materialSearchBar = (MaterialSearchBar) findViewById( R.id.searchBar );
@@ -121,7 +134,7 @@ public class FoodList extends AppCompatActivity {
 				Food.class,
 				R.layout.food_item,
 				FoodViewHolder.class,
-				foodList.orderByChild( "Name" ).equalTo( text.toString() )
+				foodList.orderByChild( "name" ).equalTo( text.toString() )
 		) {
 			@Override
 			protected void populateViewHolder( FoodViewHolder viewHolder , Food model , int position ) {
@@ -144,7 +157,7 @@ public class FoodList extends AppCompatActivity {
 	}
 	
 	private void loadSuggest( ) {
-		foodList.orderByChild( "MenuId").equalTo( categoryId )
+		foodList.orderByChild( "menuId").equalTo( categoryId )
 				.addValueEventListener( new ValueEventListener( ) {
 					@Override
 					public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
@@ -164,12 +177,33 @@ public class FoodList extends AppCompatActivity {
 	
 	private void loadListFood( String categoryId ) {
 		adapter = new FirebaseRecyclerAdapter < Food, FoodViewHolder >( Food.class, R.layout.food_item,
-			FoodViewHolder.class, foodList.orderByChild( "MenuId" ).equalTo( categoryId )	) {
+			FoodViewHolder.class, foodList.orderByChild( "menuId" ).equalTo( categoryId )	) {
 			@Override
-			protected void populateViewHolder( FoodViewHolder viewHolder , Food model , int position ) {
+			protected void populateViewHolder( final FoodViewHolder viewHolder , final Food model , final int position ) {
 				viewHolder.food_name.setText( model.getName() );
 				Picasso.with( getBaseContext() ).load( model.getImage() )
 						.into( viewHolder.food_image );
+				
+				//Add Favorites
+				if(localDB.isFavorites( adapter.getRef( position ).getKey() )){
+					viewHolder.fav_image.setImageResource( R.drawable.ic_favorite_black_24dp );
+				}
+				
+				viewHolder.fav_image.setOnClickListener( new View.OnClickListener( ) {
+					@Override
+					public void onClick( View v ) {
+						if(!localDB.isFavorites( adapter.getRef( position ).getKey() )){
+							localDB.addToFavorites( adapter.getRef( position ).getKey() );
+							viewHolder.fav_image.setImageResource( R.drawable.ic_favorite_black_24dp );
+							Toast.makeText( FoodList.this, ""+model.getName()+" was added to Favorites!!!", Toast.LENGTH_SHORT ).show();
+						} else {
+							localDB.removeFromFavorites( adapter.getRef( position ).getKey() );
+							viewHolder.fav_image.setImageResource( R.drawable.ic_favorite_border_black_24dp );
+							Toast.makeText( FoodList.this, ""+model.getName()+" was removed from Favorites!!!", Toast.LENGTH_SHORT ).show();
+						}
+					}
+				} );
+				
 				final Food local = model;
 				viewHolder.setItemClickListener( new ItemClickListener( ) {
 					@Override

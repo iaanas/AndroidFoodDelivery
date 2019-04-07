@@ -15,19 +15,37 @@
             android:id="@+id/food_image"
             android:scaleType="centerCrop"
             android:src="@drawable/back_android_app"
+            android:background="@color/overlayActionBar"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <TextView
-            android:id="@+id/food_name"
-            android:text="Name of Menu"
-            android:textColor="@color/overlayBackground"
-            android:textSize="20sp"
-            android:gravity="center"
+        <LinearLayout
+            android:weightSum="10"
             android:layout_alignParentBottom="true"
-            android:background="@color/overlayActionBar"
+            android:orientation="horizontal"
+            android:background="@color/colorPrimary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/food_name"
+                android:text="Name of Menu"
+                android:textColor="@color/overlayBackground"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:layout_weight="9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/fav"
+                android:src="@drawable/ic_favorite_border_black_24dp"
+                android:tint="@android:color/white"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 

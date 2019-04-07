@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import io.paperdb.Paper;
+import ru.androidtestapp.Service.ListenOrder;
 import ru.androidtestapp.ViewHolder.MenuViewHolder;
 import ru.androidtestapp.androidfooddelivery.Common.Common;
 import ru.androidtestapp.androidfooddelivery.Intarface.ItemClickListener;
@@ -52,6 +54,8 @@ public class Home extends AppCompatActivity
 		//Init FireBase
 		database = FirebaseDatabase.getInstance();
 		category = database.getReference("Category");
+		
+		Paper.init( this );
 		
 		
 		
@@ -84,7 +88,16 @@ public class Home extends AppCompatActivity
 		layoutManager = new LinearLayoutManager( this );
 		recycler_menu.setLayoutManager( layoutManager );
 		
-		loadMenu();
+		if(Common.isConnectedToInternet( this )){
+			loadMenu();
+		} else {
+			Toast.makeText( this, "Please check your connection!!", Toast.LENGTH_SHORT ).show();
+			return;
+		}
+		
+		//Register Service
+		Intent service = new Intent( Home.this, ListenOrder.class );
+		startService( service );
 	}
 	
 	private void loadMenu( ) {
@@ -134,8 +147,9 @@ public class Home extends AppCompatActivity
 	
 	@Override
 	public boolean onOptionsItemSelected( MenuItem item ) {
-		
-		
+		if(item.getItemId() == R.id.refresh){
+			loadMenu();
+		}
 		return super.onOptionsItemSelected( item );
 	}
 	
@@ -154,6 +168,10 @@ public class Home extends AppCompatActivity
 			Intent orderIntent = new Intent( Home.this, OrderStatus.class );
 			startActivity( orderIntent );
 		} else if ( id == R.id.nav_log_out ) {
+			
+			Paper.book().destroy();
+			
+			
 			Intent signIn = new Intent( Home.this, SignIn.class );
 			signIn.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
 			startActivity( signIn );
