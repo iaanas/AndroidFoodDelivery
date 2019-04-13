@@ -68,8 +68,8 @@ public class ListenOrder extends Service implements ChildEventListener {
 				.setDefaults( Notification.DEFAULT_ALL )
 				.setWhen( System.currentTimeMillis() )
 				.setTicker("EDMTDev")
-				.setContentInfo( "Your order was updated" )
-				.setContentText( "Order # "+ key + " was update status to " +
+				.setContentInfo( "Информация о вашем заказе была обновлена" )
+				.setContentText( "Статус заказа # "+ key + " был обновлен. Новый статус: " +
 						Common.convertCodeToStatus( request.getStatus() ) )
 				.setContentIntent( contentIntent )
 				.setContentInfo( "Info" )

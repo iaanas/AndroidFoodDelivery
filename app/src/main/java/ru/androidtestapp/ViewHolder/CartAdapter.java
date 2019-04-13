@@ -52,7 +52,7 @@ class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickList
 	
 	@Override
 	public void onCreateContextMenu( ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo ) {
-		menu.setHeaderTitle( "Select action" );
+		menu.setHeaderTitle( "Выберите действие" );
 		menu.add( 0, 0, getAdapterPosition(), Common.DELETE );
 	}
 }
@@ -78,12 +78,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
 	@Override
 	public void onBindViewHolder( @NonNull CartViewHolder cartViewHolder , int position ) {
 		TextDrawable drawable = TextDrawable.builder()
-				.buildRound( ""+listData.get( position ).getQuantity(), Color.RED );
+				.buildRound( ""+listData.get( position ).getQuantity(), Color.GRAY );
 		cartViewHolder.img_cart_count.setImageDrawable( drawable );
 		
 		Locale locale = new Locale( "en", "US" );
 		NumberFormat fmt = NumberFormat.getCurrencyInstance(locale);
-		int price = (Integer.parseInt( listData.get( position ).getPrice() ) )*(Integer.parseInt( listData.get( position ).getQuantity() ) );
+		double price = (Double.parseDouble( listData.get( position ).getPrice() ) )*((Integer.parseInt( listData.get( position ).getQuantity() ))*100 );
 		cartViewHolder.txt_price.setText( fmt.format( price ) );
 		cartViewHolder.txt_cart_name.setText( listData.get( position ).getProductName() );
 		

@@ -8,6 +8,7 @@
 
     <com.mancj.materialsearchbar.MaterialSearchBar
         android:id="@+id/searchBar"
+        android:layout_below="@+id/toolbar"
         app:mt_speechMode="false"
         app:mt_hint="Enter your food"
         android:layout_alignParentTop="true"

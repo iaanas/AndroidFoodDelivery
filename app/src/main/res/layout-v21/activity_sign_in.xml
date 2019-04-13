@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/back_android_app"
+    android:background="@drawable/honeycomb"
     tools:context=".SignIn">
 
     <LinearLayout
@@ -17,34 +17,34 @@
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/edtPhone"
-            android:hint="Phone Number"
+            android:hint="Номер телефона"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@android:color/white"
-            android:text="0988"
-            android:textColor="@android:color/white"
+            android:textColorHint="@color/colorPrimary"
+            android:text=""
+            android:textColor="@color/colorPrimary"
             android:textSize="34sp"
             android:inputType="phone"
-            app:met_baseColor="@android:color/white"
+            app:met_baseColor="@color/colorPrimary"
             app:met_floatingLabel="highlight"
             app:met_maxCharacters="11"
-            app:met_primaryColor="@android:color/white"
+            app:met_primaryColor="@color/colorPrimary"
             app:met_singleLineEllipsis="true"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/edtPassword"
-            android:hint="Password"
+            android:hint="Пароль"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@android:color/white"
-            android:text="1234"
-            android:textColor="@android:color/white"
+            android:textColorHint="@color/colorPrimary"
+            android:text=""
+            android:textColor="@color/colorPrimary"
             android:textSize="34sp"
             android:inputType="textPassword"
-            app:met_baseColor="@android:color/white"
+            app:met_baseColor="@color/colorPrimary"
             app:met_floatingLabel="highlight"
             app:met_maxCharacters="11"
-            app:met_primaryColor="@android:color/white"
+            app:met_primaryColor="@color/colorPrimary"
             app:met_singleLineEllipsis="true"/>
 
         <CheckBox
@@ -52,17 +52,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Material.Drawable.CheckBox"
-            android:text="Remember me"
+            android:text="Запомнить меня"
             android:gravity="center_vertical"
-            android:textColor="@color/white"
-            app:cbd_strokeColor="@android:color/white"
+            android:textColor="@color/colorPrimary"
+            app:cbd_strokeColor="@color/colorPrimary"
             app:cbd_tickColor="@color/colorPrimary"
             />
 
         <Button
             android:id="@+id/btnSignIn"
-            android:text="SignIn"
+            android:text="Войти"
             android:textColor="@android:color/white"
+            android:backgroundTint="@color/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"/>

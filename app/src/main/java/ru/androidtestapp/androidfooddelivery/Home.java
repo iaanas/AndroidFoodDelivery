@@ -48,7 +48,7 @@ public class Home extends AppCompatActivity
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_home );
 		Toolbar toolbar = ( Toolbar ) findViewById( R.id.toolbar );
-		toolbar.setTitle( "Menu" );
+		toolbar.setTitle( "Каталог" );
 		setSupportActionBar( toolbar );
 		
 		//Init FireBase

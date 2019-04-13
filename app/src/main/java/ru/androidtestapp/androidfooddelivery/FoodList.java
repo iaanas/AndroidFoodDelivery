@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -54,6 +55,16 @@ public class FoodList extends AppCompatActivity {
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_food_list );
 		
+//		Toolbar toolbar = (Toolbar ) findViewById( R.id.toolbar );
+//		toolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace_black_24dp);
+//		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				Intent intent = new Intent( FoodList.this, Home.class );
+//				startActivity( intent );
+//			}
+//		});
+		
 		//FireBase
 		database = FirebaseDatabase.getInstance();
 		foodList = database.getReference("Food");
@@ -74,14 +85,14 @@ public class FoodList extends AppCompatActivity {
 			if( Common.isConnectedToInternet( getBaseContext() ) ){
 				loadListFood(categoryId);
 			} else {
-				Toast.makeText( FoodList.this, "Please check your connection!!!",
+				Toast.makeText( FoodList.this, "Пожалуйста, проверьте интернет-соединение!!!",
 						Toast.LENGTH_SHORT).show();
 				return;
 			}
 		}
 		
 		materialSearchBar = (MaterialSearchBar) findViewById( R.id.searchBar );
-		materialSearchBar.setHint( "Enter your food" );
+		materialSearchBar.setHint( "Начните вводить название продукта ..." );
 //		materialSearchBar.setSpeechMode( false );
 		loadSuggest();
 		materialSearchBar.setLastSuggestions( suggestList );
@@ -195,11 +206,11 @@ public class FoodList extends AppCompatActivity {
 						if(!localDB.isFavorites( adapter.getRef( position ).getKey() )){
 							localDB.addToFavorites( adapter.getRef( position ).getKey() );
 							viewHolder.fav_image.setImageResource( R.drawable.ic_favorite_black_24dp );
-							Toast.makeText( FoodList.this, ""+model.getName()+" was added to Favorites!!!", Toast.LENGTH_SHORT ).show();
+							Toast.makeText( FoodList.this, ""+model.getName()+" был добавлен в Избранные!!!", Toast.LENGTH_SHORT ).show();
 						} else {
 							localDB.removeFromFavorites( adapter.getRef( position ).getKey() );
 							viewHolder.fav_image.setImageResource( R.drawable.ic_favorite_border_black_24dp );
-							Toast.makeText( FoodList.this, ""+model.getName()+" was removed from Favorites!!!", Toast.LENGTH_SHORT ).show();
+							Toast.makeText( FoodList.this, ""+model.getName()+" был удален из Избранные!!!", Toast.LENGTH_SHORT ).show();
 						}
 					}
 				} );

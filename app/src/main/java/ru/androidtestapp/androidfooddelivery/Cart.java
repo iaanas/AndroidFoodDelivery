@@ -42,6 +42,8 @@ public class Cart extends AppCompatActivity {
 	List< Order > cart = new ArrayList <>(  );
 	CartAdapter adapter;
 	
+	NumberFormat fmt;
+	
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
@@ -68,7 +70,7 @@ public class Cart extends AppCompatActivity {
 				if(cart.size() > 0){
 					showAlertDialog();
 				} else {
-					Toast.makeText( Cart.this, "Your cart is empty!",
+					Toast.makeText( Cart.this, "Ваш бланк заказа пуст ...",
 							Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -80,8 +82,8 @@ public class Cart extends AppCompatActivity {
 	
 	private void showAlertDialog() {
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder( Cart.this );
-		alertDialog.setTitle( "One more step!" );
-		alertDialog.setMessage( "Enter your address: " );
+		alertDialog.setTitle( "Отправить бланк заказа" );
+		alertDialog.setMessage( "Оставьте Ваш комментарий к заказу: " );
 		
 		final EditText edtAddress = new EditText( Cart.this );
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -92,7 +94,7 @@ public class Cart extends AppCompatActivity {
 		alertDialog.setView( edtAddress );
 		alertDialog.setIcon( R.drawable.ic_shopping_cart_black_24dp );
 		
-		alertDialog.setPositiveButton( "YES" , new DialogInterface.OnClickListener( ) {
+		alertDialog.setPositiveButton( "ОК" , new DialogInterface.OnClickListener( ) {
 			@Override
 			public void onClick( DialogInterface dialog , int which ) {
 				Request request = new Request(
@@ -109,12 +111,12 @@ public class Cart extends AppCompatActivity {
 						.setValue( request );
 				//Delete cart
 				new Database( getBaseContext() ).cleanCart();
-				Toast.makeText( Cart.this, "Thank you, Order Place",
+				Toast.makeText( Cart.this, "Спасибо! Бланк заказа отправлен Вашему персональному менеджеру",
 						Toast.LENGTH_SHORT).show();
 				finish();
 			}
 		} );
-		alertDialog.setNegativeButton( "NO" , new DialogInterface.OnClickListener( ) {
+		alertDialog.setNegativeButton( "ОТМЕНА" , new DialogInterface.OnClickListener( ) {
 			@Override
 			public void onClick( DialogInterface dialog , int which ) {
 				dialog.dismiss();
@@ -130,13 +132,19 @@ public class Cart extends AppCompatActivity {
 		recyclerView.setAdapter( adapter );
 		
 		//Calculate total price
-		int total = 0;
+		double total = 0;
 		for (Order order:cart) {
-			total+=(Integer.parseInt( order.getPrice() ))*(Integer.parseInt( order.getQuantity() ));
+			total+=(Double.parseDouble( order.getPrice() ))*((Integer.parseInt( order.getQuantity() ))*100);
 			
 			Locale locale = new Locale( "en", "US" );
-			NumberFormat fmt = NumberFormat.getCurrencyInstance(locale);
+			fmt = NumberFormat.getCurrencyInstance(locale);
 			
+//			txtTotalPrice.setText( fmt.format( total ) );
+		}
+		
+		if (total == 0){
+			txtTotalPrice.setText( "0");
+		} else {
 			txtTotalPrice.setText( fmt.format( total ) );
 		}
 	}

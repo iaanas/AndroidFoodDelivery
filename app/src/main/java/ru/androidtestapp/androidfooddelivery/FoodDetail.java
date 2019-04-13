@@ -1,10 +1,13 @@
 package ru.androidtestapp.androidfooddelivery;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -53,6 +56,17 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_food_default);
 		
+		Toolbar toolbar = (Toolbar ) findViewById( R.id.toolbar );
+		toolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace_black_24dp);
+		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent( FoodDetail.this, Home.class );
+				startActivity( intent );
+			}
+		});
+		
+		
 		//FireBase
 		database = FirebaseDatabase.getInstance();
 		foods = database.getReference("Food");
@@ -60,6 +74,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 		
 		//Init view
 		numberButton = findViewById( R.id.number_button );
+		
 		btnCart = findViewById( R.id.btnCart );
 		btnRating = (FloatingActionButton ) findViewById( R.id.btn_rating );
 		ratingBar = (RatingBar ) findViewById( R.id.ratingBar );
@@ -82,7 +97,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 						currentFood.getDiscount()
 						
 				) );
-				Toast.makeText( FoodDetail.this, "Added to Cart",
+				Toast.makeText( FoodDetail.this, "Добавлен в бланк заказа",
 						Toast.LENGTH_SHORT).show();
 			}
 		} );
@@ -106,7 +121,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 				getRatingFood(foodId);
 				
 			} else {
-				Toast.makeText( FoodDetail.this, "Please check your connection!!!",
+				Toast.makeText( FoodDetail.this, "Пожалуйста, проверьте интернет-соединение!!!",
 						Toast.LENGTH_SHORT).show();
 				return;
 			}
@@ -142,15 +157,15 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 	
 	private void showRatingDialog( ) {
 		new AppRatingDialog.Builder()
-				.setPositiveButtonText( "Submit" )
-				.setNegativeButtonText( "Cancel" )
-				.setNoteDescriptions( Arrays.asList( "Very Bad", "Not Good", "Quite Ok", "Very Good", "Excellent" ) )
+				.setPositiveButtonText( "Отправить" )
+				.setNegativeButtonText( "Закрыть" )
+				.setNoteDescriptions( Arrays.asList( "Плохо", "Нормально", "Хорошо", "Очень хорошо", "Превосходно" ) )
 				.setDefaultRating( 1 )
-				.setTitle( "Rate this food" )
-				.setDescription( "Please select some stars and give your feedback" )
+				.setTitle( "Рейтинг продукта" )
+				.setDescription( "Пожалуйста, дайте совокупную оценку продукту" )
 				.setTitleTextColor( R.color.colorPrimary )
 				.setDescriptionTextColor( R.color.colorPrimary )
-				.setHint( "Please write your comment here ... " )
+				.setHint( "Пожалуйста, оставьте здесь свой комментарий ... " )
 				.setHintTextColor( R.color.colorAccent )
 				.setCommentTextColor( android.R.color.white )
 				.setCommentBackgroundColor( R.color.colorPrimaryDark )
@@ -169,7 +184,8 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 				Picasso.with( getBaseContext() ).load( currentFood.getImage() )
 						.into( food_image );
 				
-				collapsingToolbarLayout.setTitle( currentFood.getName() );
+				collapsingToolbarLayout.setTitle( "Lyncmed Russia" );
+				
 				food_price.setText( currentFood.getPrice() );
 				food_name.setText( currentFood.getName() );
 				food_description.setText( currentFood.getDescription() );
@@ -208,7 +224,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 					//Update new value
 					ratingTbl.child( Common.currentUser.getPhone() ).setValue( rating );
 				}
-				Toast.makeText( FoodDetail.this, "Thanks!!!", Toast.LENGTH_SHORT ).show();
+				Toast.makeText( FoodDetail.this, "Спасибо за Ваш отзыв!", Toast.LENGTH_SHORT ).show();
 			}
 			
 			@Override
@@ -217,4 +233,5 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 			}
 		} );
 	}
+	
 }

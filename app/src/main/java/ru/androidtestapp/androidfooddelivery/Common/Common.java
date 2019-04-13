@@ -19,10 +19,10 @@ public class Common {
 		}
 	}
 	
-	public static final String DELETE = "Delete";
+	public static final String DELETE = "Удалить";
 	
-	public static final String USER_KEY = "User";
-	public static final String PWD_KEY = "Password";
+	public static final String USER_KEY = "Пользователь";
+	public static final String PWD_KEY = "Пароль";
 	
 	public static boolean isConnectedToInternet( Context context ){
 		ConnectivityManager connectivityManager =
