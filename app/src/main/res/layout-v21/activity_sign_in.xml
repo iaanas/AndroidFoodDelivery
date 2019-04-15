@@ -47,17 +47,35 @@
             app:met_primaryColor="@color/colorPrimary"
             app:met_singleLineEllipsis="true"/>
 
-        <CheckBox
-            android:id="@+id/ckbRemember"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Material.Drawable.CheckBox"
-            android:text="Запомнить меня"
-            android:gravity="center_vertical"
-            android:textColor="@color/colorPrimary"
-            app:cbd_strokeColor="@color/colorPrimary"
-            app:cbd_tickColor="@color/colorPrimary"
-            />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:id="@+id/ckbRemember"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                style="@style/Material.Drawable.CheckBox"
+                android:text="Запомнить меня"
+                android:gravity="center_vertical"
+                android:textColor="@color/colorPrimary"
+                app:cbd_strokeColor="@color/colorPrimary"
+                app:cbd_tickColor="@color/colorPrimary"
+                />
+
+            <TextView
+                android:id="@+id/txtForgotPwd"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/forgot_pwd"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnSignIn"

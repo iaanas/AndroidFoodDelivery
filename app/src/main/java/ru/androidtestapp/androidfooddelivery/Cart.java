@@ -1,11 +1,13 @@
 package ru.androidtestapp.androidfooddelivery;
 
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -14,19 +16,33 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.esotericsoftware.minlog.Log;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.androidtestapp.ViewHolder.CartAdapter;
 import ru.androidtestapp.androidfooddelivery.Common.Common;
 import ru.androidtestapp.androidfooddelivery.Database.Database;
+import ru.androidtestapp.androidfooddelivery.Model.MyResponse;
+import ru.androidtestapp.androidfooddelivery.Model.Notification;
 import ru.androidtestapp.androidfooddelivery.Model.Order;
 import ru.androidtestapp.androidfooddelivery.Model.Request;
+import ru.androidtestapp.androidfooddelivery.Model.Sender;
+import ru.androidtestapp.androidfooddelivery.Model.Token;
+import ru.androidtestapp.androidfooddelivery.Remote.APIService;
 
 public class Cart extends AppCompatActivity {
 	
@@ -44,6 +60,8 @@ public class Cart extends AppCompatActivity {
 	
 	NumberFormat fmt;
 	
+	APIService mService;
+	
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
@@ -52,6 +70,9 @@ public class Cart extends AppCompatActivity {
 		//FireBase
 		database = FirebaseDatabase.getInstance();
 		requests = database.getReference("Request");
+		
+		//Init Service
+		mService = Common.getFCMService();
 		
 		//Init
 		recyclerView = (RecyclerView) findViewById( R.id.listCart );
@@ -85,13 +106,13 @@ public class Cart extends AppCompatActivity {
 		alertDialog.setTitle( "Отправить бланк заказа" );
 		alertDialog.setMessage( "Оставьте Ваш комментарий к заказу: " );
 		
-		final EditText edtAddress = new EditText( Cart.this );
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.MATCH_PARENT
-		);
-		edtAddress.setLayoutParams( lp );
-		alertDialog.setView( edtAddress );
+		LayoutInflater inflater = this.getLayoutInflater();
+		View order_address_comment = inflater.inflate(R.layout.order_address_comment, null);
+		
+		final MaterialEditText edtAddress = (MaterialEditText ) order_address_comment.findViewById( R.id.edtAddress );
+		final MaterialEditText edtComment = (MaterialEditText ) order_address_comment.findViewById( R.id.edtComment );
+		
+		alertDialog.setView( order_address_comment );
 		alertDialog.setIcon( R.drawable.ic_shopping_cart_black_24dp );
 		
 		alertDialog.setPositiveButton( "ОК" , new DialogInterface.OnClickListener( ) {
@@ -102,18 +123,22 @@ public class Cart extends AppCompatActivity {
 						Common.currentUser.getName(),
 						edtAddress.getText().toString(),
 						txtTotalPrice.getText().toString(),
+						"0",
+						edtComment.getText().toString(),
 						cart
 				);
 				
 				//Submit to FireBase
 				//We will using System.CurrentMilli to key
-				requests.child( String.valueOf( System.currentTimeMillis() ) )
+				String order_number = String.valueOf( System.currentTimeMillis() );
+				requests.child( order_number )
 						.setValue( request );
 				//Delete cart
 				new Database( getBaseContext() ).cleanCart();
-				Toast.makeText( Cart.this, "Спасибо! Бланк заказа отправлен Вашему персональному менеджеру",
-						Toast.LENGTH_SHORT).show();
-				finish();
+				sendNotificationOrder(order_number);
+//				Toast.makeText( Cart.this, "Спасибо! Бланк заказа отправлен Вашему персональному менеджеру",
+//						Toast.LENGTH_SHORT).show();
+//				finish();
 			}
 		} );
 		alertDialog.setNegativeButton( "ОТМЕНА" , new DialogInterface.OnClickListener( ) {
@@ -123,6 +148,51 @@ public class Cart extends AppCompatActivity {
 			}
 		} );
 		alertDialog.show();
+	}
+	
+	private void sendNotificationOrder( final String order_number ) {
+		DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
+		Query data = tokens.orderByChild( "isServerToken" ).equalTo( true );
+		data.addValueEventListener( new ValueEventListener( ) {
+			@Override
+			public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+				for(DataSnapshot postSnapShot:dataSnapshot.getChildren()){
+					Token serverToken = postSnapShot.getValue(Token.class);
+					Notification notification = new Notification(
+							"Lyncmed Russia", "У Вас новый заказ "+
+							order_number
+					);
+					Sender content = new Sender(serverToken.getToken(), notification);
+					
+					mService.sendNotification( content )
+							.enqueue( new Callback < MyResponse >( ) {
+								@Override
+								public void onResponse( Call< MyResponse > call , Response< MyResponse > response ) {
+									if(response.code() == 200) {
+										if(response.body().success == 1){
+											Toast.makeText( Cart.this, "Спасибо! Бланк заказа отправлен Вашему персональному менеджеру",
+													Toast.LENGTH_SHORT).show();
+											finish();
+										} else {
+											Toast.makeText( Cart.this, "Что-то пошло не так ...",
+													Toast.LENGTH_SHORT).show();
+										}
+									}
+								}
+								
+								@Override
+								public void onFailure( Call < MyResponse > call , Throwable t ) {
+									Log.error("ERROR", t.getMessage());
+								}
+							} );
+				}
+			}
+			
+			@Override
+			public void onCancelled( @NonNull DatabaseError databaseError ) {
+			
+			}
+		} );
 	}
 	
 	private void loadListFood( ) {

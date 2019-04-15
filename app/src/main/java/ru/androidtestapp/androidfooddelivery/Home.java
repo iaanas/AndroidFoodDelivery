@@ -1,11 +1,14 @@
 package ru.androidtestapp.androidfooddelivery;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,16 +22,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import dmax.dialog.SpotsDialog;
 import io.paperdb.Paper;
-import ru.androidtestapp.Service.ListenOrder;
 import ru.androidtestapp.ViewHolder.MenuViewHolder;
 import ru.androidtestapp.androidfooddelivery.Common.Common;
 import ru.androidtestapp.androidfooddelivery.Intarface.ItemClickListener;
 import ru.androidtestapp.androidfooddelivery.Model.Category;
+import ru.androidtestapp.androidfooddelivery.Model.Token;
 
 public class Home extends AppCompatActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -95,9 +107,14 @@ public class Home extends AppCompatActivity
 			return;
 		}
 		
-		//Register Service
-		Intent service = new Intent( Home.this, ListenOrder.class );
-		startService( service );
+		updateToken( FirebaseInstanceId.getInstance().getToken() );
+	}
+	
+	private void updateToken( String token ) {
+		FirebaseDatabase db = FirebaseDatabase.getInstance();
+		DatabaseReference tokens = db.getReference("Tokens");
+		Token data = new Token( token, false );
+		tokens.child( Common.currentUser.getPhone() ).setValue( token );
 	}
 	
 	private void loadMenu( ) {
@@ -175,10 +192,74 @@ public class Home extends AppCompatActivity
 			Intent signIn = new Intent( Home.this, SignIn.class );
 			signIn.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
 			startActivity( signIn );
+		} else if(id == R.id.nav_change_pwd){
+			showChangePasswordDialog();
 		}
 		
 		DrawerLayout drawer = ( DrawerLayout ) findViewById( R.id.drawer_layout );
 		drawer.closeDrawer( GravityCompat.START );
 		return true;
+	}
+	
+	private void showChangePasswordDialog( ) {
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder( Home.this );
+		alertDialog.setTitle( "Изменить пароль" );
+		alertDialog.setMessage( "Пожалуйста, заполните форму: " );
+		LayoutInflater inflater = LayoutInflater.from( this );
+		View layout_pwd = inflater.inflate( R.layout.change_password_layout, null );
+		final MaterialEditText edtPassword = (MaterialEditText)layout_pwd.findViewById( R.id.edtPassword );
+		final MaterialEditText edtNewPassword = (MaterialEditText)layout_pwd.findViewById( R.id.edtNewPassword );
+		final MaterialEditText edtRepeatPassword = (MaterialEditText)layout_pwd.findViewById( R.id.edtRepeatPassword );
+		
+		alertDialog.setView( layout_pwd );
+		
+		alertDialog.setPositiveButton( "Изменить" , new DialogInterface.OnClickListener( ) {
+			@Override
+			public void onClick( DialogInterface dialog , int which ) {
+				
+				final android.app.AlertDialog weitingDialog = new SpotsDialog( Home.this );
+				weitingDialog.show();
+				
+				if (edtPassword.getText().toString().equals( Common.currentUser.getPassword() )){
+					
+					if(edtNewPassword.getText().toString().equals( edtRepeatPassword.getText().toString() )){
+						Map<String, Object> passwordUpdates = new HashMap <>(  );
+						passwordUpdates.put("Password", edtNewPassword.getText().toString());
+						
+						DatabaseReference user = FirebaseDatabase.getInstance().getReference("User");
+						user.child( Common.currentUser.getPhone() )
+								.updateChildren( passwordUpdates )
+								.addOnCompleteListener( new OnCompleteListener < Void >( ) {
+									@Override
+									public void onComplete( @NonNull Task< Void > task ) {
+										weitingDialog.dismiss();
+										Toast.makeText( Home.this, "Пароль был обновлен",
+												Toast.LENGTH_SHORT).show();
+									}
+								} )
+								.addOnFailureListener( new OnFailureListener( ) {
+									@Override
+									public void onFailure( @NonNull Exception e ) {
+										Toast.makeText( Home.this, e.getMessage(),
+												Toast.LENGTH_SHORT).show();
+									}
+								} );
+					}else {
+						Toast.makeText( Home.this, "Пароли не совпадают", Toast.LENGTH_SHORT ).show();
+					}
+				
+				} else {
+					Toast.makeText( Home.this, "Прежний пароль не верен", Toast.LENGTH_SHORT ).show();
+				}
+			
+			}
+		} );
+		alertDialog.setNegativeButton( "Отмена" , new DialogInterface.OnClickListener( ) {
+			@Override
+			public void onClick( DialogInterface dialog , int which ) {
+				dialog.dismiss();
+			}
+		} );
+		alertDialog.show();
 	}
 }
