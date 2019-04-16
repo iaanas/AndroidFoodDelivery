@@ -3,8 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    app:cardElevation="4dp">
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="0dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,16 +17,16 @@
             android:scaleType="centerCrop"
             android:src="@drawable/back_android_app"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="200dp" />
 
         <TextView
             android:id="@+id/menu_name"
             android:text="Name of Menu"
-            android:textColor="@color/overlayBackground"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:gravity="center"
-            android:layout_alignParentBottom="true"
-            android:background="@color/overlayActionBar"
+            android:layout_centerInParent="true"
+            android:background="#4f0e0d0e"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
