@@ -12,6 +12,7 @@ public class Common {
 	public static User currentUser;
 	
 	private static final String BASE_URL = "https://fcm.googleapis.com/";
+	public static String PHONE_TEXT = "\"userPhone\"";
 	
 	public static APIService getFCMService(){
 		return RetrofitClient.getClient( BASE_URL ).create( APIService.class );
