@@ -116,6 +116,54 @@ public class FoodList extends AppCompatActivity {
 						return;
 					}
 				}
+				
+				materialSearchBar = (MaterialSearchBar) findViewById( R.id.searchBar );
+				materialSearchBar.setHint( "Начните вводить название продукта ..." );
+				loadSuggest();
+				materialSearchBar.setLastSuggestions( suggestList );
+				materialSearchBar.setCardViewElevation( 10 );
+				
+				materialSearchBar.addTextChangeListener( new TextWatcher( ) {
+					@Override
+					public void beforeTextChanged( CharSequence s , int start , int count , int after ) {
+					
+					}
+					
+					@Override
+					public void onTextChanged( CharSequence s , int start , int before , int count ) {
+						List<String> suggest = new ArrayList <String>(  );
+						for(String search:suggestList){
+							if(search.toLowerCase().contains( materialSearchBar.getText().toLowerCase() ))
+								suggest.add( search );
+						}
+						materialSearchBar.setLastSuggestions( suggest );
+					}
+					
+					@Override
+					public void afterTextChanged( Editable s ) {
+					
+					}
+				} );
+				
+				materialSearchBar.setOnSearchActionListener( new MaterialSearchBar.OnSearchActionListener( ) {
+					@Override
+					public void onSearchStateChanged( boolean enabled ) {
+						if(!enabled){
+							recyclerView.setAdapter( adapter );
+						}
+					}
+					
+					@Override
+					public void onSearchConfirmed( CharSequence text ) {
+						startSearch( text );
+					}
+					
+					@Override
+					public void onButtonClicked( int buttonCode ) {
+					
+					}
+				} );
+				
 			}
 		} );
 		
@@ -124,56 +172,6 @@ public class FoodList extends AppCompatActivity {
 		layoutManager = new LinearLayoutManager( this );
 		recyclerView.setLayoutManager( layoutManager );
 		
-		//Get Intent here
-		
-		
-		materialSearchBar = (MaterialSearchBar) findViewById( R.id.searchBar );
-		materialSearchBar.setHint( "Начните вводить название продукта ..." );
-//		materialSearchBar.setSpeechMode( false );
-		loadSuggest();
-		materialSearchBar.setLastSuggestions( suggestList );
-		materialSearchBar.setCardViewElevation( 10 );
-		
-		materialSearchBar.addTextChangeListener( new TextWatcher( ) {
-			@Override
-			public void beforeTextChanged( CharSequence s , int start , int count , int after ) {
-			
-			}
-			
-			@Override
-			public void onTextChanged( CharSequence s , int start , int before , int count ) {
-				List<String> suggest = new ArrayList <String>(  );
-				for(String search:suggestList){
-					if(search.toLowerCase().contains( materialSearchBar.getText().toLowerCase() ))
-						suggest.add( search );
-				}
-				materialSearchBar.setLastSuggestions( suggest );
-			}
-			
-			@Override
-			public void afterTextChanged( Editable s ) {
-			
-			}
-		} );
-		
-		materialSearchBar.setOnSearchActionListener( new MaterialSearchBar.OnSearchActionListener( ) {
-			@Override
-			public void onSearchStateChanged( boolean enabled ) {
-				if(!enabled){
-					recyclerView.setAdapter( adapter );
-				}
-			}
-			
-			@Override
-			public void onSearchConfirmed( CharSequence text ) {
-				startSearch( text );
-			}
-			
-			@Override
-			public void onButtonClicked( int buttonCode ) {
-			
-			}
-		} );
 		
 	}
 	private void startSearch(CharSequence text) {
