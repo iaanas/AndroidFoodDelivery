@@ -56,15 +56,15 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_food_default);
 		
-		Toolbar toolbar = (Toolbar ) findViewById( R.id.toolbar );
-		toolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace_black_24dp);
-		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent( FoodDetail.this, Home.class );
-				startActivity( intent );
-			}
-		});
+//		Toolbar toolbar = (Toolbar ) findViewById( R.id.toolbar );
+//		toolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace_black_24dp);
+//		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				Intent intent = new Intent( FoodDetail.this, Home.class );
+//				startActivity( intent );
+//			}
+//		});
 		
 		
 		//FireBase

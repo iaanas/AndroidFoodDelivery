@@ -34,6 +34,7 @@
             <TextView
                 android:id="@+id/food_name"
                 android:text="Name of Menu"
+                android:layout_marginStart="10dp"
                 android:textSize="20sp"
                 android:layout_weight="9"
                 android:layout_width="0dp"
@@ -53,6 +54,7 @@
             android:id="@+id/food_price"
             android:text="$0"
             android:textSize="20sp"
+            android:layout_marginStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

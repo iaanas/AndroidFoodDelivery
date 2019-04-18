@@ -67,6 +67,7 @@ public class Cart extends AppCompatActivity {
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_cart );
 		
+		
 		//FireBase
 		database = FirebaseDatabase.getInstance();
 		requests = database.getReference("Request");
@@ -197,6 +198,7 @@ public class Cart extends AppCompatActivity {
 	
 	private void loadListFood( ) {
 		cart = new Database(this).getCarts();
+		
 		adapter = new CartAdapter( cart, this );
 		adapter.notifyDataSetChanged();
 		recyclerView.setAdapter( adapter );

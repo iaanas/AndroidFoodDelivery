@@ -43,7 +43,7 @@ public class SignUp extends AppCompatActivity {
 				
 				if( Common.isConnectedToInternet( getBaseContext() ) ){
 					final ProgressDialog mDialog = new ProgressDialog( SignUp.this );
-					mDialog.setMessage( "Please waiting... " );
+					mDialog.setMessage( "Пожалуйста, подождите ... " );
 					mDialog.show();
 					
 					table_user.addValueEventListener( new ValueEventListener( ) {
@@ -52,7 +52,7 @@ public class SignUp extends AppCompatActivity {
 							//Check if already user phone
 							if(dataSnapshot.child( edtPhone.getText().toString() ).exists()) {
 								mDialog.dismiss();
-								Toast.makeText( SignUp.this , "User exist yet" ,
+								Toast.makeText( SignUp.this , "Пользователь зарегистрирован" ,
 										Toast.LENGTH_SHORT ).show( );
 							} else {
 								mDialog.dismiss();
@@ -62,7 +62,7 @@ public class SignUp extends AppCompatActivity {
 										edtSecureCode.getText().toString());
 								
 								table_user.child( edtPhone.getText().toString() ).setValue( user );
-								Toast.makeText( SignUp.this , "Successful" ,
+								Toast.makeText( SignUp.this , "Успешно" ,
 										Toast.LENGTH_SHORT ).show( );
 								finish();
 							}
@@ -74,7 +74,7 @@ public class SignUp extends AppCompatActivity {
 						}
 					} );
 				} else {
-					Toast.makeText( SignUp.this, "Please check your connection !!!", Toast.LENGTH_SHORT ).show();
+					Toast.makeText( SignUp.this, "Пожалуйста, проверьте Ваше интернет соединение !!!", Toast.LENGTH_SHORT ).show();
 				}
 			
 			}

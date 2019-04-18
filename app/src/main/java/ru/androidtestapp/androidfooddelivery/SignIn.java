@@ -98,12 +98,12 @@ public class SignIn extends AppCompatActivity {
 									
 									
 								} else {
-									Toast.makeText( SignIn.this , "Sign in not successfully :(" ,
+									Toast.makeText( SignIn.this , "Не верен номер телефона или пароль" ,
 											Toast.LENGTH_SHORT ).show( );
 								}
 							} else {
 								mDialog.dismiss();
-								Toast.makeText( SignIn.this , "User not exist" ,
+								Toast.makeText( SignIn.this , "Пользователь не зарегистрирован" ,
 										Toast.LENGTH_SHORT ).show( );
 							}
 							
