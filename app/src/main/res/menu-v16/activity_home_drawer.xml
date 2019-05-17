@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:checked="true"
+            android:id="@+id/nav_menu"
+            android:icon="@drawable/ic_storage_black_24dp"
+            android:iconTint="@android:color/white"
+            android:title="Каталог" />
+
+        <item
+            android:id="@+id/nav_cart"
+            android:icon="@drawable/ic_shopping_cart_black_24dp"
+            android:iconTint="@android:color/white"
+            android:title="Бланк заказа" />
+
+        <item
+            android:id="@+id/nav_orders"
+            android:icon="@drawable/ic_access_time_black_24dp"
+            android:iconTint="@android:color/white"
+            android:title="История заказов" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_supervisor_account_black_24dp"
+            android:iconTint="@android:color/white"
+            android:title="Профиль Lyncmed" />
+
+        <item
+            android:id="@+id/nav_faq"
+            android:icon="@drawable/ic_forum_black_24dp"
+            android:iconTint="@android:color/white"
+            android:title="FAQ" />
+
+        <item
+            android:id="@+id/nav_change_pwd"
+            android:icon="@drawable/ic_security_black_24dp"
+            android:iconTint="@android:color/white"
+            android:title="Изменить пароль" />
+
+
+        <item
+            android:id="@+id/nav_log_out"
+            android:icon="@drawable/ic_directions_run_black_24dp"
+            android:iconTint="@android:color/white"
+            android:title="Выйти" />
+
+    </group>
+
+
+</menu>
+

@@ -232,7 +232,7 @@ public class FoodList extends AppCompatActivity {
 				
 				//Add Favorites
 				if(localDB.isFavorites( adapter.getRef( position ).getKey() )){
-					viewHolder.fav_image.setImageResource( R.drawable.ic_favorite_black_24dp );
+					viewHolder.fav_image.setImageResource( R.drawable.ic_favorite_border_black_24dp);
 				}
 				
 				viewHolder.fav_image.setOnClickListener( new View.OnClickListener( ) {
@@ -240,7 +240,7 @@ public class FoodList extends AppCompatActivity {
 					public void onClick( View v ) {
 						if(!localDB.isFavorites( adapter.getRef( position ).getKey() )){
 							localDB.addToFavorites( adapter.getRef( position ).getKey() );
-							viewHolder.fav_image.setImageResource( R.drawable.ic_favorite_black_24dp );
+							viewHolder.fav_image.setImageResource( R.drawable.ic_favorite_border_black_24dp );
 							Toast.makeText( FoodList.this, ""+model.getName()+" был добавлен в Избранные!!!", Toast.LENGTH_SHORT ).show();
 						} else {
 							localDB.removeFromFavorites( adapter.getRef( position ).getKey() );

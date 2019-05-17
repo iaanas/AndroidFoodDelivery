@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="John"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/white"
         android:textSize="24sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
